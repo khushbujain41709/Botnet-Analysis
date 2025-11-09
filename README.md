@@ -95,11 +95,16 @@ pip install -r requirements.txt
 streamlit run main.py
  ```
 ---
-## Developer
+### Developers
 
-**Developed by:** Khushbu Jain ❤️</br>
-**National Institute of Technology, Raipur**  
-**Roll No:** 23115047  
+| Name | Roll Number |
+|----------|----------------|
+| [Khushbu Jain](https://github.com/khushbujain41709) | 23115047 |
+| [Kruti Dadriwal](https://github.com/krutidadriwal) | 23115050 |
+| [Mukka Manideep](https://github.com/Manideep-Mukka) | 23115058 |
+| [P.Sai Madhuri Bai](https://github.com/Madhuri2829) | 23115067 |
+
+
  
 ---
 
