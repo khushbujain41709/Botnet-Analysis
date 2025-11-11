@@ -614,8 +614,11 @@ st.sidebar.markdown("""
     }
     </style>
     <div class="sidebar-footer">
-        <strong>Developed by Khushbu Jain</strong><br>
-        NIT Raipur • 23115047 ❤️
+        <strong>Developed by:</strong><br>
+        Khushbu Jain • 23115047<br>
+        Kruti Dadriwal • 23115050<br>
+        Mukka Manideep • 23115058<br>
+        P.Sai Madhuri Bai • 23115067<br>
     </div>
 """, unsafe_allow_html=True)
 st.sidebar.image("rustyRobot.jpeg", use_container_width=True)
