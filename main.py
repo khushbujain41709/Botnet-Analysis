@@ -5,7 +5,6 @@ import numpy as np
 import json
 import re
 
-# PAGE CONFIGURATION
 st.set_page_config(
     page_title="Bot vs Human Detection",
     page_icon="👻"
