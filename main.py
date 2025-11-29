@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
+import json
+import re
 
-# PAGE CONFIGURATION
 # PAGE CONFIGURATION
 st.set_page_config(
     page_title="Bot vs Human Detection",
@@ -42,7 +43,7 @@ def model_prediction(text):
 # SIDEBAR NAVIGATION
 st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", 
-    ["Home", "About Project", "Bot Detection", "Test Examples"])
+    ["Home", "About Project", "Bot Detection", "Test Examples", "Twitter Analysis"])
 st.markdown("""
 <style>
     section[data-testid="stSidebar"] h1,
@@ -120,15 +121,21 @@ if app_mode == "Home":
     st.image("botImageHome.png", use_container_width=False)
     st.markdown("""
     Welcome to the **Bot vs Human Detection System!**  
-    Our mission is to help identify automated bot accounts and distinguish them from genuine human users.  
-    Upload text content or paste messages, and our system will analyze them to detect bot-like patterns.  
+    Our mission is to help identify automated bot accounts and distinguish them from genuine human users across various platforms including Twitter and Telegram.
+    Upload text content, paste messages, or analyze Twitter data to detect bot-like patterns. 
     Together, let's create safer digital spaces!  
     """)
     st.markdown('<div class="section-header">How It Works</div>', unsafe_allow_html=True)
     st.markdown("""
-    1. **Input Text:** Go to the **Bot Detection** page and paste or type text content.  
-    2. **Analysis:** Our system will process the text using advanced character-level machine learning algorithms.  
-    3. **Results:** View the classification results with confidence scores and detailed insights.
+    ### Option 1: Text Analysis
+    1. **Input Text:** Go to the **Bot Detection** page and paste or type text content  
+    2. **Analysis:** Our system processes text using advanced character-level machine learning algorithms  
+    3. **Results:** View classification results with confidence scores and detailed insights
+
+    ### Option 2: Twitter Data Analysis  
+    1. **Upload Data:** Go to the **Twitter Analysis** page and upload your Twitter JSON file  
+    2. **Automated Processing:** System extracts and analyzes tweets automatically  
+    3. **Comprehensive Report:** Get detailed bot detection analysis with probability distributions
     """)
     st.markdown('<div class="section-header">Detection Categories</div>', unsafe_allow_html=True)
     st.markdown("""
@@ -140,20 +147,206 @@ if app_mode == "Home":
     """)
     st.markdown('<div class="section-header">Why Choose Our System?</div>', unsafe_allow_html=True)
     st.markdown("""
-    - **Accuracy:** 84% accurate character-level pattern recognition  
+    - **Multi-Platform Analysis:** Works with direct text input and Twitter data exports  
+    - **High Accuracy:** 84% accurate character-level pattern recognition  
     - **Real-time Analysis:** Get instant results for quick decision making  
     - **Comprehensive Detection:** Identifies multiple types of automated behavior  
-    - **User-Friendly:** Simple interface requiring no technical expertise
+    - **User-Friendly:** Simple interface requiring no technical expertise  
+    - **Batch Processing:** Analyze multiple tweets simultaneously from JSON files
     """)
     st.markdown('<div class="section-header">Get Started</div>', unsafe_allow_html=True)
     st.markdown("""
-    Click on the **Bot Detection** page in the sidebar to start analyzing text content!
-    """)
-    st.markdown('<div class="section-header">Learn More</div>', unsafe_allow_html=True)
-    st.markdown("""
-    Visit the **About Project** page to understand our methodology and technology.
+    **For Quick Testing:**
+    - Use the **Bot Detection** page for single text analysis  
+    - Try the **Test Examples** page for pre-loaded samples
+
+    **For Twitter Analysis:**
+    - Use the **Twitter Analysis** page for bulk tweet analysis  
+    - Upload your Twitter data export (JSON format)  
+    - Get comprehensive bot probability reports
+
+    **Want to Learn More?**
+    - Visit the **About Project** page for technical details  
+    - Understand our methodology and dataset composition
     """)
 
+elif app_mode == "Twitter Analysis":
+    st.header("Twitter Analysis")
+    st.markdown("""
+    <style>
+    /* APP BACKGROUND (deep bluish-purple gradient) */
+    [data-testid="stAppViewContainer"] {
+        background: linear-gradient(135deg, #0D0A1A 0%, #120E26 40%, #1A1433 80%, #211A3F 100%);
+        color: #D8D4E8;
+    }
+    /* Remove stray white line / spacing */
+    html, body, [data-testid="stAppViewContainer"], .main {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #171228, #120E22);
+        color: #D8D4E8 !important;
+        border-right: 1px solid rgba(120, 110, 160, 0.25);
+        box-shadow: 8px 0 25px rgba(40, 35, 70, 0.65) !important;
+    }
+    h1, h2, h3, h4 {
+        color: #A79BD9;                /* soft muted violet */
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 700;
+    }
+    p, li {
+        color: #D8D4E8;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    a {
+        color: #B7A9E6;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #E5DFFF;
+    }
+    img {
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(50, 40, 80, 0.6);
+        transition: 0.25s ease-in-out;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    img:hover {
+        transform: scale(1.015);
+        box-shadow: 0 0 35px rgba(90, 80, 130, 0.65);
+    }
+    .card {
+        background: rgba(20, 16, 36, 0.55);    /* very dark purple glass */
+        padding: 20px;
+        border-radius: 14px;
+        margin-top: 20px;
+        border: 1px solid rgba(140, 130, 180, 0.25);
+        box-shadow: 0 0 25px rgba(25, 20, 50, 0.45);
+    }
+    .prob-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 18px;
+        margin-top: 20px;
+    }
+    /* Single probability card */
+    .prob-card {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+        border: 1px solid rgba(120, 110, 150, 0.25);
+        transition: 0.2s ease-in-out;
+        box-shadow: 0 0 15px rgba(10,10,20,0.6);
+    }
+    .prob-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 25px rgba(35, 30, 55, 0.5);
+    }
+    /* Label text */
+    .prob-card .label {
+        font-size: 1rem;
+        color: #C9C3E8;
+        font-weight: 600;
+    }
+    /* Value text */
+    .prob-card .value {
+        margin-top: 10px;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #E6E2F5;
+    }
+    /* Highlight highest probability */
+    .prob-card.highest {
+        background: rgba(70, 60, 110, 0.25);
+        border: 1px solid rgba(160, 150, 220, 0.3);
+        box-shadow: 0 0 30px rgba(55, 45, 85, 0.65);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    st.image("160325-microsoft-tay-tweets-yh-0920a.webp", use_container_width=True)
+    st.markdown("""
+    <div class="card">
+        <h4 style="margin:0;">Twitter Bot Detection Analysis</h4>
+        <p style="color:#B0B8D0; font-size:0.9em; margin-top:8px;">
+            Upload your Twitter JSON file to analyze tweets and detect bot behavior patterns with enhanced probability visualization.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Choose Twitter JSON File", type=['json'])
+    # Extract tweet text
+    def extract_tweets_simple(json_data):
+        tweets = []
+        def find_text(obj):
+            if isinstance(obj, dict):
+                if 'full_text' in obj and isinstance(obj['full_text'], str):
+                    if obj['full_text'].strip():
+                        tweets.append(obj['full_text'].strip())
+                for v in obj.values():
+                    find_text(v)
+            elif isinstance(obj, list):
+                for item in obj:
+                    find_text(item)
+        find_text(json_data)
+        return tweets
+    if uploaded_file:
+        json_data = json.load(uploaded_file)
+        st.success("JSON file loaded successfully!")
+        tweets = extract_tweets_simple(json_data)
+        if not tweets:
+            st.error("No tweets found.")
+        else:
+            st.info(f"Found {len(tweets)} tweets")
+            if st.button("Analyze Tweets"):
+                valid_tweets = [t for t in tweets if len(t) > 10]
+                if not valid_tweets:
+                    st.warning("No valid tweets for analysis")
+                else:
+                    sample_tweet = valid_tweets[0]
+                    result_index, confidence, probabilities = model_prediction(sample_tweet)
+
+                    class_name = label_map[result_index]
+                    conf = float(confidence) * 100
+                    # CLASSIFICATION
+                    st.markdown(f"""
+                    <div class="card">
+                        <h3 style="margin:0;">Overall Classification: {class_name.upper()}</h3>
+                        <p style="margin-top:6px; color:#B0B8D0;">
+                            Average Confidence: <b style="color:#6C63FF; text-shadow: 0 0 10px rgba(108, 99, 255, 0.5);">{conf:.1f}%</b>
+                        </p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    # ENHANCED PROBABILITY GRID
+                    st.subheader("Probability Distribution")
+                    labels = ["Human", "Content Bot", "Follower Bot", "Spam Bot", "Service Bot"]
+                    prob_values = [float(p) for p in probabilities.flatten()]
+                    # Find the highest probability for highlighting
+                    max_prob_index = prob_values.index(max(prob_values))
+                    st.markdown('<div class="prob-grid">', unsafe_allow_html=True)
+                    for i, (label, prob) in enumerate(zip(labels, prob_values)):
+                        highest_class = "highest" if i == max_prob_index else ""
+                        st.markdown(f"""
+                        <div class="prob-card {highest_class}">
+                            <div class="label">{label}</div>
+                            <div class="value">{prob*100:.1f}%</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="card">
+                        <h4 style="margin:0; color:#58A6FF;">Sample Tweet Analyzed</h4>
+                        <p style="color:#E6EDF3; font-size:0.9em; margin-top:8px; background: rgba(13,17,23,0.7); padding: 12px; border-radius: 8px; border-left: 3px solid #58A6FF;">
+                            "{sample_tweet[:200]}{'...' if len(sample_tweet) > 200 else ''}"
+                        </p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
 # ABOUT PAGE
 elif app_mode == "About Project":
     st.markdown("""
