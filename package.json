@@ -1,0 +1,24 @@
+{
+  "name": "y",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "> This project uses **Machine Learning (XGBoost)** with **TF-IDF vectorization** to distinguish between **human** and **bot-generated text**.  \r > The web interface is built using **Streamlit**\r ---",
+  "main": "apis.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khushbujain41709/Botness-Analysis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/khushbujain41709/Botness-Analysis/issues"
+  },
+  "homepage": "https://github.com/khushbujain41709/Botness-Analysis#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "graceful-fs": "^4.2.11"
+  }
+}
