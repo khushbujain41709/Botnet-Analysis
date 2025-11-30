@@ -268,21 +268,21 @@ dotenv.config();
 //     throw new Error(error.message);
 //   }
 // }
-// export async function scrapeTwitterProfile(handle) {
-//   try {
-//     const response = await axios.get(
-//       `https://api.scrapecreators.com/v1/twitter/profile?handle=${handle}`,
-//       {
-//         headers: {
-//           "x-api-key": process.env.SCRAPE_CREATORS_API_KEY,
-//         },
-//       }
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.log("error at scrapeTwitterProfile", error.message);
-//   }
-// }
+export async function scrapeTwitterProfile(handle) {
+  try {
+    const response = await axios.get(
+      `https://api.scrapecreators.com/v1/twitter/profile?handle=${handle}`,
+      {
+        headers: {
+          "x-api-key": process.env.SCRAPE_CREATORS_API_KEY,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("error at scrapeTwitterProfile", error.message);
+  }
+}
 export async function scrapeUserTweets(handle) {
   try {
     const response = await axios.get(
@@ -299,22 +299,22 @@ export async function scrapeUserTweets(handle) {
     throw new Error(error.message);
   }
 }
-// export async function scrapeTweet(url) {
-//   try {
-//     const response = await axios.get(
-//       `https://api.scrapecreators.com/v1/twitter/tweet?url=${url}`,
-//       {
-//         headers: {
-//           "x-api-key": process.env.SCRAPE_CREATORS_API_KEY,
-//         },
-//       }
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.error("error at scrapeTweet", error.message);
-//     throw new Error(error.message);
-//   }
-// }
+export async function scrapeTweet(url) {
+  try {
+    const response = await axios.get(
+      `https://api.scrapecreators.com/v1/twitter/tweet?url=${url}`,
+      {
+        headers: {
+          "x-api-key": process.env.SCRAPE_CREATORS_API_KEY,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error at scrapeTweet", error.message);
+    throw new Error(error.message);
+  }
+}
 // export async function scrapeTruthSocialPosts(handle) {
 //   try {
 //     const response = await axios.get(
@@ -332,4 +332,5 @@ export async function scrapeUserTweets(handle) {
 //   }
 
 // }
+
 
