@@ -1,7 +1,7 @@
 # Bot vs Human Detection System
 
 > This project uses **Machine Learning (XGBoost)** with **TF-IDF vectorization** to distinguish between **human** and **bot-generated text**.  
-> The web interface is built using **Streamlit**
+> The web interface is built using **Streamlit**.
 ---
 
 ## Project Description
@@ -9,7 +9,7 @@
 The **Bot vs Human Detection System** is a text classification project designed to identify whether a given text was produced by a **human** or a **bot** (such as content bots, spam bots, follower bots, or customer service bots).
 
 Using a **character-level n-gram model** and **XGBoost classifier**, the app captures linguistic and structural patterns that differentiate human writing from automated text.  
-The system is integrated into a user-friendly **Streamlit dashboard**.
+The system is integrated into a user-friendly **Streamlit dashboard** with both text input and Twitter data analysis capabilities.
 
 ---
 
@@ -69,6 +69,7 @@ This project uses **character-level n-gram analysis** instead of traditional wor
 |------|--------------|
 | **Home** | Overview of the system and its working process. |
 | **Bot Detection** | Paste or upload text and get prediction results instantly. |
+| **Twitter Analysis** | Bulk analysis of Twitter JSON exports with probability distributions |
 | **About Project** | Learn about the dataset, training process, and model architecture. |
 | **Test Examples** | Examples to test the bot detection system.|
 ---
